@@ -21,9 +21,10 @@ public class Agent implements Runnable{
 		List<String> randomIngredients = SandwichUtils.pickNRandomIngredients(2);
 		for(int i = 0; i < randomIngredients.size(); i++) {
             String item = randomIngredients.get(i);
+            System.out.println(Thread.currentThread().getName() + " started ");
             System.out.println(Thread.currentThread().getName() + " produced " + item);
              
-            
+            synchronized (sandwich) {
                 while (sandwich.isEatable() || !sandwich.isReadyForAgent()) {
                     try {
                         sandwich.wait();
@@ -35,7 +36,7 @@ public class Agent implements Runnable{
                 if(sandwich.isReadyForChef()) {
                 	sandwich.notifyAll();
                 }
-            
+            }
             try {
                 Thread.sleep(500);
             } catch (InterruptedException e) {}
