@@ -50,7 +50,7 @@ public class Chef implements Runnable{
 		System.out.println(Thread.currentThread().getName() + " started.");
 		
 		synchronized (sandwich) {
-			while (!sandwich.isEatable() || !sandwich.isReadyForChef()) {
+			while (!sandwich.isEatable() && !sandwich.isReadyForChef()) {
 				try {
 					sandwich.wait();
 				} catch (InterruptedException e) {
