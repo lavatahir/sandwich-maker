@@ -4,16 +4,15 @@ import java.util.List;
 
 public class Agent implements Runnable{
 	private Plate plate;
-	private int numSandwiches = 20;
 	
 	public Agent(Plate p) {
 		this.plate = p;
 	}
 	
-	public List<String> pickNRandomIngredients(int n) {
+	public List<String> pickRandomIngredients() {
 	    List<String> copy = new ArrayList<String>(PlateUtils.ingredients);
 	    Collections.shuffle(copy);
-	    return copy.subList(0, n);
+	    return copy.subList(0, 2);
 	}
 	
 	@Override
@@ -21,7 +20,7 @@ public class Agent implements Runnable{
 		System.out.println("Agent " + Thread.currentThread().getName() + " started.");
 		while(PlateUtils.counter <= PlateUtils.NUM_SANDWICHES) {
 			System.out.println("\nAgent " + Thread.currentThread().getName() + " creating sandwich #"+PlateUtils.counter+".");
-			List<String> randomIngredients = pickNRandomIngredients(2);
+			List<String> randomIngredients = pickRandomIngredients();
 			for(int i = 0; i < randomIngredients.size(); i++) {
 	            String item = randomIngredients.get(i);
 	            synchronized (plate) {
