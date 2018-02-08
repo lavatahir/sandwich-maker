@@ -1,7 +1,7 @@
 
 public class Main {
 	public static void main(String[] args){
-		Sandwich s = new Sandwich();
+		Plate s = new Plate();
 		Agent a = new Agent(s);
 		Chef c1 = new Chef(s,"BREAD");
 		Chef c2 = new Chef(s,"PEANUT BUTTER");

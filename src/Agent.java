@@ -3,19 +3,14 @@ import java.util.Collections;
 import java.util.List;
 
 public class Agent implements Runnable{
-	private Sandwich sandwich;
+	private Plate plate;
 	
-	public Agent(Sandwich s) {
-		this.sandwich = s;
-	}
-	public String getRandomIngredient() {
-		int index = (int )(Math.random() * SandwichUtils.MAX_SIZE);
-		return SandwichUtils.ingredients.get(index);
-		
+	public Agent(Plate p) {
+		this.plate = p;
 	}
 	
 	public List<String> pickNRandomIngredients(int n) {
-	    List<String> copy = new ArrayList<String>(SandwichUtils.ingredients);
+	    List<String> copy = new ArrayList<String>(PlateUtils.ingredients);
 	    Collections.shuffle(copy);
 	    return copy.subList(0, n);
 	}
@@ -27,19 +22,19 @@ public class Agent implements Runnable{
 			System.out.println("Agent " + Thread.currentThread().getName() + " started.");
 			for(int i = 0; i < randomIngredients.size(); i++) {
 	            String item = randomIngredients.get(i);
-	            synchronized (sandwich) {
-	                while (sandwich.isEatable() || !sandwich.isReadyForAgent()) {
+	            synchronized (plate) {
+	                while (plate.isEatable() || !plate.isReadyForAgent()) {
 	                    try {
-	                    	sandwich.wait();
+	                    	plate.wait();
 	                    } catch (InterruptedException e) {
 	                        return;
 	                    }
 	                }    
 	                
-	                if(sandwich.isReadyForAgent()) {
-	                	sandwich.addIngredient(item);
+	                if(plate.isReadyForAgent()) {
+	                	plate.addIngredient(item);
 	                	System.out.println("Agent " + Thread.currentThread().getName() + " added " + item + " to sandwich.");
-	                	sandwich.notifyAll();
+	                	plate.notifyAll();
 	                }
 	            }
 	            try {

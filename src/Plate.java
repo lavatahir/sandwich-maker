@@ -1,67 +1,73 @@
 import java.util.*;
 
-public class Sandwich {
+public class Plate {
 	private Set<String> ingredients = Collections.synchronizedSet(new HashSet<String>());
 	private boolean eatable = false;
 	private boolean isReadyForChef = false;
 	private boolean isReadyForAgent = true;
-	
+
 	public void addIngredient(String s) {
-		if(eatable) {
+		if (eatable) {
 			System.out.println(eatable);
 			return;
 		}
-		if(sandwichIngredientsDoesntContain(s) && SandwichUtils.isValidIngredient(s)) {
+		if (plateIngredientsDoesntContain(s) && PlateUtils.isValidIngredient(s)) {
 			ingredients.add(s);
 		}
-		
-		if(ingredients.size() == SandwichUtils.MAX_SIZE) {
+
+		if (ingredients.size() == PlateUtils.MAX_SIZE) {
 			eatable = true;
 		}
-		if(ingredients.size() == 2) {
+		if (ingredients.size() == 2) {
 			isReadyForChef = true;
 			isReadyForAgent = false;
 		}
 	}
-	public Set<String> getIngredients(){
+
+	public Set<String> getIngredients() {
 		return ingredients;
 	}
+
 	public void eatSandwich() {
-		if(!eatable) {
+		if (!eatable) {
 			return;
 		}
-		
+
 		ingredients.clear();
 		eatable = false;
 		isReadyForChef = false;
 		isReadyForAgent = true;
 	}
 
-	private boolean sandwichIngredientsDoesntContain(String s) {
+	private boolean plateIngredientsDoesntContain(String s) {
 		Iterator<String> iter = ingredients.iterator();
 		while (iter.hasNext()) {
 			String ingredient = iter.next();
-			if(s.equalsIgnoreCase(ingredient)) {
+			if (s.equalsIgnoreCase(ingredient)) {
 				return false;
 			}
 		}
 		return true;
 	}
+
 	public boolean isEatable() {
 		return eatable;
 	}
+
 	public boolean isReadyForChef() {
 		return isReadyForChef;
 	}
+
 	public boolean isReadyForAgent() {
 		return isReadyForAgent;
 	}
+
 	public String toString() {
-		String s = "Sandwich Ingredients: ";
+		String s = "Plate Ingredients: ";
 		Iterator<String> iter = ingredients.iterator();
 		while (iter.hasNext()) {
 			String ingredient = iter.next();
-			s+= ingredient + " ";
+			s += ingredient + " ";
 		}
 		return s;
 	}
