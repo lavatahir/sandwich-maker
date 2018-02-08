@@ -29,7 +29,7 @@ public class Chef implements Runnable{
 	@Override
 	public void run() {
 		System.out.println("Chef " + Thread.currentThread().getName() + " started.");
-		while(true) {
+		while(PlateUtils.counter <= PlateUtils.NUM_SANDWICHES) {
 			synchronized (plate) {
 				while ((!plate.isEatable() && !plate.isReadyForChef()) || !checkIfMissingIngredient(plate)) {
 					try {

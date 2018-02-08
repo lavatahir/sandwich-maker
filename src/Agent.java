@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Agent implements Runnable{
 	private Plate plate;
+	private int numSandwiches = 20;
 	
 	public Agent(Plate p) {
 		this.plate = p;
@@ -17,9 +18,10 @@ public class Agent implements Runnable{
 	
 	@Override
 	public void run() {
-		for (int x = 0; x < 3; x++) {
+		System.out.println("Agent " + Thread.currentThread().getName() + " started.");
+		while(PlateUtils.counter <= PlateUtils.NUM_SANDWICHES) {
+			System.out.println("\nAgent " + Thread.currentThread().getName() + " creating sandwich #"+PlateUtils.counter+".");
 			List<String> randomIngredients = pickNRandomIngredients(2);
-			System.out.println("Agent " + Thread.currentThread().getName() + " started.");
 			for(int i = 0; i < randomIngredients.size(); i++) {
 	            String item = randomIngredients.get(i);
 	            synchronized (plate) {
@@ -41,6 +43,7 @@ public class Agent implements Runnable{
 	                Thread.sleep(500);
 	            } catch (InterruptedException e) {}
 	        }
+			PlateUtils.incrementCounter();
 		}
 	}
 }
