@@ -1,8 +1,11 @@
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Chef implements Runnable{
 	private String ingredient;
 	private Sandwich sandwich;
-	private boolean isSandwichMissingChefIngredient = false;
 	
 	public Chef(String ingredient) {
 		this.setIngredient(ingredient);
@@ -41,44 +44,35 @@ public class Chef implements Runnable{
 		return s;	
 	}
 	private boolean checkIfMissingIngredient(Sandwich sandwich) {
-		System.out.println("WE MISSIN? " + sandwich.getIngredients().contains(ingredient));
-		return sandwich.getIngredients().contains(ingredient);
+		Set<String> copySandwichIngredients = sandwich.getIngredients();
+		copySandwichIngredients.add(ingredient);
+		return copySandwichIngredients.containsAll(SandwichUtils.ingredients);
 	}
 	
 	@Override
 	public void run() {
-		System.out.println(Thread.currentThread().getName() + " started.");
-		
-		synchronized (sandwich) {
-			while (!sandwich.isEatable() && !sandwich.isReadyForChef()) {
-				try {
-					sandwich.wait();
-				} catch (InterruptedException e) {
-					return;
+		System.out.println("Chef " + Thread.currentThread().getName() + " started.");
+		while(true) {
+			synchronized (sandwich) {
+				while ((!sandwich.isEatable() && !sandwich.isReadyForChef()) || !checkIfMissingIngredient(sandwich)) {
+					try {
+						sandwich.wait();
+					} catch (InterruptedException e) {
+						return;
+					}
 				}
-			}
-			checkIfMissingIngredient(sandwich);
-			/*
-			if(sandwich.isEatable()){
-				System.out.println("EATIN");
-				sandwich.eatSandwich();
-			}
-			if(sandwich.isReadyForChef()){
-				if(checkIfMissingIngredient(sandwich)){
-					System.out.println("ADDIN");
+				if(checkIfMissingIngredient(sandwich) && sandwich.isReadyForChef()) {
 					sandwich.addIngredient(ingredient);
+					System.out.println("Chef " +Thread.currentThread().getName() + " added ingredient " + ingredient);	
 					sandwich.eatSandwich();
+					System.out.println("Chef " +Thread.currentThread().getName() + " consumed sandwich");	
 				}
+				sandwich.notifyAll();
 			}
-			*/
-			sandwich.notifyAll();
+			
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {}
 		}
-		System.out.println(Thread.currentThread().getName() + " consumed sandwich");
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {}
-	}
-	
-	public static void main(String[] args) {
 	}
 }

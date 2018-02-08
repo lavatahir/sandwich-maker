@@ -1,13 +1,14 @@
 import java.util.*;
 
 public class Sandwich {
-	private Collection<String> ingredients = Collections.synchronizedCollection(new ArrayList<String>());
+	private Set<String> ingredients = Collections.synchronizedSet(new HashSet<String>());
 	private boolean eatable = false;
 	private boolean isReadyForChef = false;
 	private boolean isReadyForAgent = true;
 	
-	public synchronized void addIngredient(String s) {
+	public void addIngredient(String s) {
 		if(eatable) {
+			System.out.println(eatable);
 			return;
 		}
 		if(sandwichIngredientsDoesntContain(s) && SandwichUtils.isValidIngredient(s)) {
@@ -22,10 +23,10 @@ public class Sandwich {
 			isReadyForAgent = false;
 		}
 	}
-	public synchronized Collection<String> getIngredients(){
+	public Set<String> getIngredients(){
 		return ingredients;
 	}
-	public synchronized void eatSandwich() {
+	public void eatSandwich() {
 		if(!eatable) {
 			return;
 		}
@@ -34,17 +35,14 @@ public class Sandwich {
 		eatable = false;
 		isReadyForChef = false;
 		isReadyForAgent = true;
-		System.out.println("IMA EAT THIS SANDWICH");
 	}
 
 	private boolean sandwichIngredientsDoesntContain(String s) {
-		synchronized(ingredients) { 
-			Iterator<String> iter = ingredients.iterator();
-			while (iter.hasNext()) {
-				String ingredient = iter.next();
-				if(s.equalsIgnoreCase(ingredient)) {
-					return false;
-				}
+		Iterator<String> iter = ingredients.iterator();
+		while (iter.hasNext()) {
+			String ingredient = iter.next();
+			if(s.equalsIgnoreCase(ingredient)) {
+				return false;
 			}
 		}
 		return true;
@@ -53,7 +51,6 @@ public class Sandwich {
 		return eatable;
 	}
 	public boolean isReadyForChef() {
-		System.out.println("WE READY? " + isReadyForChef);
 		return isReadyForChef;
 	}
 	public boolean isReadyForAgent() {
@@ -61,17 +58,11 @@ public class Sandwich {
 	}
 	public String toString() {
 		String s = "Sandwich Ingredients: ";
-		synchronized(ingredients) { 
-			Iterator<String> iter = ingredients.iterator();
-			while (iter.hasNext()) {
-				String ingredient = iter.next();
-				s+= ingredient + " ";
-			}
+		Iterator<String> iter = ingredients.iterator();
+		while (iter.hasNext()) {
+			String ingredient = iter.next();
+			s+= ingredient + " ";
 		}
 		return s;
-	}
-	public static void main(String[] args) {
-		Sandwich s = new Sandwich();
-		
 	}
 }

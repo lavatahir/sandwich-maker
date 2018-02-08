@@ -9,9 +9,5 @@ public class SandwichUtils {
 	public static boolean isValidIngredient(String s) {
 		return SandwichUtils.ingredients.contains(s);
 	}
-	public static List<String> pickNRandomIngredients(int n) {
-	    List<String> copy = new ArrayList<String>(SandwichUtils.ingredients);
-	    Collections.shuffle(copy);
-	    return copy.subList(0, n);
-	}
+	
 }

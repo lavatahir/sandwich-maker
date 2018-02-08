@@ -1,11 +1,9 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 public class Agent implements Runnable{
 	private Sandwich sandwich;
-	private HashSet<String> ingredient = new HashSet<String>(1);
 	
 	public Agent(Sandwich s) {
 		this.sandwich = s;
@@ -16,38 +14,38 @@ public class Agent implements Runnable{
 		
 	}
 	
+	public List<String> pickNRandomIngredients(int n) {
+	    List<String> copy = new ArrayList<String>(SandwichUtils.ingredients);
+	    Collections.shuffle(copy);
+	    return copy.subList(0, n);
+	}
+	
 	@Override
 	public void run() {
-		List<String> randomIngredients = SandwichUtils.pickNRandomIngredients(2);
-		for(int i = 0; i < randomIngredients.size(); i++) {
-            String item = randomIngredients.get(i);
-            System.out.println(Thread.currentThread().getName() + " started ");
-            System.out.println(Thread.currentThread().getName() + " produced " + item);
-             
-            synchronized (sandwich) {
-                while (sandwich.isEatable() || !sandwich.isReadyForAgent()) {
-                    try {
-                        sandwich.wait();
-                    } catch (InterruptedException e) {
-                        return;
-                    }
-                }            
-                sandwich.addIngredient(item);               	
-                if(sandwich.isReadyForChef()) {
-                	sandwich.notifyAll();
-                }
-            }
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {}
-        }
-		
+		for (int x = 0; x < 3; x++) {
+			List<String> randomIngredients = pickNRandomIngredients(2);
+			System.out.println("Agent " + Thread.currentThread().getName() + " started.");
+			for(int i = 0; i < randomIngredients.size(); i++) {
+	            String item = randomIngredients.get(i);
+	            synchronized (sandwich) {
+	                while (sandwich.isEatable() || !sandwich.isReadyForAgent()) {
+	                    try {
+	                    	sandwich.wait();
+	                    } catch (InterruptedException e) {
+	                        return;
+	                    }
+	                }    
+	                
+	                if(sandwich.isReadyForAgent()) {
+	                	sandwich.addIngredient(item);
+	                	System.out.println("Agent " + Thread.currentThread().getName() + " added " + item + " to sandwich.");
+	                	sandwich.notifyAll();
+	                }
+	            }
+	            try {
+	                Thread.sleep(500);
+	            } catch (InterruptedException e) {}
+	        }
+		}
 	}
-
-	public static void main(String[] args) {
-		Sandwich s = new Sandwich();
-		Thread agentThread = new Thread(new Agent(s));
-		agentThread.start();
-	}
-
 }
